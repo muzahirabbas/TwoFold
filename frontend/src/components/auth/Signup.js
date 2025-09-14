@@ -1,9 +1,13 @@
-
+// File: frontend/src/components/auth/Signup.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import { db } from '../../api/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { db, auth } from '../../api/firebase';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+
+// Import the necessary Firebase functions for Google Sign-In
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -11,7 +15,6 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -20,7 +23,7 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      const { user } = await signup(email, password);
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
       // Create a user document in Firestore
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
@@ -29,7 +32,7 @@ const Signup = () => {
         coupleId: null,
         joinedAt: new Date(),
       });
-      navigate('/create-couple'); // Redirect to create/join couple page
+      navigate('/create-couple');
     } catch (err) {
       setError('Failed to create an account. The email may already be in use.');
       console.error(err);
@@ -38,10 +41,63 @@ const Signup = () => {
     setLoading(false);
   };
 
+  // --- START: Added Google Sign-in Logic ---
+  const handleSocialLogin = async (provider) => {
+    setError('');
+    setLoading(true);
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        await setDoc(userDocRef, {
+          uid: user.uid,
+          name: user.displayName,
+          email: user.email,
+          coupleId: null,
+          joinedAt: new Date(),
+        });
+      }
+      
+      const finalUserDoc = await getDoc(userDocRef);
+      if (finalUserDoc.data().coupleId) {
+         navigate('/dashboard');
+      } else {
+         navigate('/create-couple');
+      }
+
+    } catch (err) {
+      setError('Failed to sign up with provider. Please try again.');
+      console.error("Social login error:", err);
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = () => {
+    const provider = new GoogleAuthProvider();
+    handleSocialLogin(provider);
+  };
+  // --- END: Added Google Sign-in Logic ---
+
   return (
     <div style={{ maxWidth: '400px', margin: 'auto', padding: '20px' }}>
       <h2>Sign Up</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      
+      {/* Google Sign-Up Button */}
+      <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <button onClick={handleGoogleSignUp} disabled={loading} style={{backgroundColor: '#4285F4'}}>
+             Sign up with Google
+          </button>
+      </div>
+
+      <p style={{textAlign: 'center'}}>OR</p>
+
+      {/* Email/Password Form */}
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '10px' }}>
           <label>Name</label>
