@@ -2,9 +2,7 @@
 # TwoFold: Your AI Relationship Companion ❤️
 
 <div align="center">
-  [![AI Career Copilot Demo Video](https://img.youtube.com/vi/pcbiuGlLgg8/0.jpg)](https://www.youtube.com/watch?v=pcbiuGlLgg8)
 
-*(Click the image above to watch the demo tutorial)*
 
 [![AI Career Copilot Demo Video](https://img.youtube.com/vi/pcbiuGlLgg8/0.jpg)](https://www.youtube.com/watch?v=pcbiuGlLgg8)
 
@@ -303,5 +301,6 @@ Distributed under the MIT License.
 ```
 
 ```
+
 
 
