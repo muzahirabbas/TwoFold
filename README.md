@@ -2,7 +2,9 @@
 # TwoFold: Your AI Relationship Companion ❤️
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/user-attachments/assets/dd046a06-8d69-42b4-825d-2541a0210e7b" alt="TwoFold Banner" width="600"/>
+  [![AI Career Copilot Demo Video](https://img.youtube.com/vi/pcbiuGlLgg8/0.jpg)](https://www.youtube.com/watch?v=pcbiuGlLgg8)
+
+*(Click the image above to watch the demo tutorial)*
 </div>
 
 <p align="center">
@@ -295,4 +297,5 @@ Contributions are welcome\! Please feel free to submit a pull request.
 Distributed under the MIT License.
 
 ```
+
 ```
